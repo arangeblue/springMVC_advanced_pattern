@@ -9,21 +9,24 @@ import com.proxy.app.v1.OrderRepositoryV1Impl;
 import com.proxy.app.v1.OrderServiceV1;
 import com.proxy.app.v1.OrderServiceV1Impl;
 import com.proxy.config.v2_dynamicproxy.handler.LogTraceBasicHandler;
+import com.proxy.config.v2_dynamicproxy.handler.LogTraceFilterHandler;
 import com.proxy.trace.logtrace.LogTrace;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *@title : DynamicProxyBasicConfig
+ *@title : DynamicProxyFilterConfig
  *@author : wikyubok 
  *@date : "2021-11-05 15:40:17"
- *@description : 동적 프록시 기술을 직접 빈에 등록하여 v1에 적용
+ *@description : 동적 프록시 기술을 직접 빈에 등록하여 v1에 적용, 이 때 filter를 적용하여 원하는 pattern의 이름을 가진 class만 적용
 */
 
 @Configuration
-public class DynamicProxyBasicConfig {
+public class DynamicProxyFilterConfig {
     
+
+    private static final String[] PATTERNS = { "request*", "order*", "save*" };
 
 
     @Bean
@@ -31,7 +34,7 @@ public class DynamicProxyBasicConfig {
         OrderControllerV1Impl orderController = new OrderControllerV1Impl(orderServiceV1(logTrace));
         OrderControllerV1 proxy = (OrderControllerV1) Proxy.newProxyInstance(OrderControllerV1.class.getClassLoader(),
                                 new Class[]{OrderControllerV1.class},
-                new LogTraceBasicHandler(orderController, logTrace));
+                new LogTraceFilterHandler(orderController, logTrace, PATTERNS));
 
 
         return proxy;
@@ -43,7 +46,7 @@ public class DynamicProxyBasicConfig {
         OrderServiceV1Impl orderService = new OrderServiceV1Impl(orderRepositoryV1(logTrace));
         OrderServiceV1 proxy = (OrderServiceV1) Proxy.newProxyInstance(OrderServiceV1.class.getClassLoader(),
                                 new Class[]{OrderServiceV1.class},
-                new LogTraceBasicHandler(orderService, logTrace));
+                new LogTraceFilterHandler(orderService, logTrace, PATTERNS));
                                 
         return proxy;
     }
@@ -54,7 +57,8 @@ public class DynamicProxyBasicConfig {
         OrderRepositoryV1Impl orderRepository = new OrderRepositoryV1Impl();
 
         OrderRepositoryV1 proxy = (OrderRepositoryV1) Proxy.newProxyInstance(OrderRepositoryV1.class.getClassLoader(),
-                new Class[] { OrderRepositoryV1.class }, new LogTraceBasicHandler(orderRepository, logTrace));
+                new Class[] { OrderRepositoryV1.class }, 
+                new LogTraceFilterHandler(orderRepository, logTrace, PATTERNS));
 
         return proxy;
     }
