@@ -1,7 +1,7 @@
 package com.proxy.pattern.proxy.cglib;
 
+import com.proxy.common.service.ConcreteService;
 import com.proxy.pattern.proxy.cglib.code.TimeMethodInterceptor;
-import com.proxy.pattern.proxy.common.service.ConcreteService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.cglib.proxy.Enhancer;

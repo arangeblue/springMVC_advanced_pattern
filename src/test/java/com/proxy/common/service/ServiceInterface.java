@@ -1,4 +1,4 @@
-package com.proxy.pattern.proxy.common.service;
+package com.proxy.common.service;
 
 /**
  *@title : ServiceInterface
