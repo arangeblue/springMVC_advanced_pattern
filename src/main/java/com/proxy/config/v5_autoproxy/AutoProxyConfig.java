@@ -6,6 +6,7 @@ import com.proxy.config.v3_proxyfactory.advice.LogTraceAdvice;
 import com.proxy.trace.logtrace.LogTrace;
 
 import org.springframework.aop.Advisor;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.aop.support.NameMatchMethodPointcutAdvisor;
@@ -25,7 +26,7 @@ import org.springframework.context.annotation.Import;
 @Configuration
 public class AutoProxyConfig {
 
-    @Bean
+    // @Bean
     public Advisor advisor1(LogTrace logTrace) {
         
         //pointcut
@@ -38,5 +39,35 @@ public class AutoProxyConfig {
         return new DefaultPointcutAdvisor(pointcut, advice);
 
     }
-    
+
+    // @Bean
+    public Advisor advisor2(LogTrace logTrace) {
+
+        // pointcut
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut(); // AspectJ로 포인트 컷 만들기
+        pointcut.setExpression("execution(* com.proxy.app..*(..))");
+
+        // advice
+        LogTraceAdvice advice = new LogTraceAdvice(logTrace);
+
+        return new DefaultPointcutAdvisor(pointcut, advice);
+
+    }
+
+
+    @Bean
+    public Advisor advisor3(LogTrace logTrace) {
+
+        // pointcut
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut(); // AspectJ로 포인트 컷 만들기
+        pointcut.setExpression("execution(* com.proxy.app..*(..)) && !execution(* com.proxy.app..noLog(..))");
+
+        // advice
+        LogTraceAdvice advice = new LogTraceAdvice(logTrace);
+
+        return new DefaultPointcutAdvisor(pointcut, advice);
+
+    }   
+
+
 }
